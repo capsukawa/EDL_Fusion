@@ -44,7 +44,6 @@ Elf32_Ehdr* initHeader(char* fadr) {
 			fread(&header->e_shentsize,2,1,f);
 			fread(&header->e_shnum,2,1,f);
 			fread(&header->e_shstrndx,2,1,f);
-			
 			if (header->e_ident[5]==2) reverseBytes(header);
 		}
 		fclose(f);
