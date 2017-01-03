@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	else {
 		Elf32_Ehdr* header;
 		header = initHeader(argv[1]);
-		printf("e_ident : %s\n",header->e_ident);	
+		printf("e_ident : %s\n",header->e_ident);
 		printf("e_type : %d\n",header->e_type);
 		printf("e_machine : %d\n",header->e_machine);
 		printf("e_version : %d\n",header->e_version);
@@ -71,5 +71,4 @@ int main(int argc, char* argv[]) {
 		printf("e_shnum : %d\n",header->e_shnum);
 		printf("e_shstrndx : %d\n",header->e_shstrndx);
 	}
-		
 }
