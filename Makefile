@@ -1,7 +1,7 @@
 CC=gcc
 FLAGS=-Wall -Werror
 
-edl_fusion: main.o afficheHeader.o header.o contenuSection.o
+edl_fusion: main.o afficheHeader.o header.o contenuSection.o afficheSectionTable.o sectionTable.o
 	$(CC) -o $@ $^
 
 main.o: main.c afficheHeader.h header.h
@@ -15,3 +15,8 @@ header.o: header.c header.h
 
 contenuSection.o: contenuSection.c contenuSection.h
 	$(CC) $(FLAGS) -c $<
+
+afficheSectionTable.o: afficheSectionTable.c sectionTable.h header.h
+	$(CC) $(FLAGS) -c $<
+	
+sectionTable.o: sectionTable.c sectionTable.h header.h

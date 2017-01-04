@@ -4,6 +4,7 @@
 #include <string.h>
 #include "afficheHeader.h"
 #include "contenuSection.h"
+#include "afficheSectionTable.h"
 
 int main(int argc, char* argv[]) {
 
@@ -15,6 +16,9 @@ int main(int argc, char* argv[]) {
 	}
 	else if (!strcmp(argv[1],"-e")) { // affichage en-tete  
 		afficheHeader(argv[2]);
+	}
+	else if (!strcmp(argv[1],"-sh")) { // affichage table en-tete section
+		afficheSectionTable(argv[2]);
 	}
 	else if (!strcmp(argv[1],"-s")) { // affichage contenu d'une section
 		if (argc!=4){
