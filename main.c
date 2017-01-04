@@ -1,18 +1,14 @@
 #include <elf.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "header.h"
+#include <string.h>
 #include "afficheHeader.h"
 
 int main(int argc, char* argv[]) {
-	switch(argv[1]) {
-    case "-h": //Aide
-      break;
-    case "-e": //Affichage du header
-      afficheHeader(argv[2]);
-      break;
-    default:
-      printf("Commande non reconnue\n");
-      break;
-  }
+ if (argc>=2 && !strcmp(argv[1],"-h")) printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
+ else if (argc==3) {
+   if (!strcmp(argv[1],"-e")) afficheHeader(argv[2]);
+ }
+ else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
+ return 0;
 }
