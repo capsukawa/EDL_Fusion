@@ -5,6 +5,7 @@
 #include "afficheHeader.h"
 #include "contenuSection.h"
 #include "afficheSectionTable.h"
+#include "tableSymbole.h"
 
 int main(int argc, char* argv[]) {
 
@@ -20,6 +21,10 @@ int main(int argc, char* argv[]) {
 	else if (!strcmp(argv[1],"-s")) { // affichage contenu d'une section
 		if (argc==4) affichageSection(argv[2], atoi(argv[3]));
 		else printf("Usage : \"./edl_fusion -s [nom_fichier] [numero_section]\"\n");
+	}
+
+	else if (!strcmp(argv[1],"-ts")) {
+		afficherTableSymbole(argv[2]);
 	}
 
 	else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
