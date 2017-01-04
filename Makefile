@@ -18,5 +18,6 @@ contenuSection.o: contenuSection.c contenuSection.h
 
 afficheSectionTable.o: afficheSectionTable.c sectionTable.h header.h
 	$(CC) $(FLAGS) -c $<
-	
+
 sectionTable.o: sectionTable.c sectionTable.h header.h
+	$(CC) $(FLAGS) -c $<

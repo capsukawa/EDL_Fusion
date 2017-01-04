@@ -8,26 +8,11 @@
 
 int main(int argc, char* argv[]) {
 
-	if (argc<2){
+	if (argc<3 || !strcmp(argv[1],"-h") || (argc!=4 && !strcmp(argv[1],"-s")))
 		printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
-	} 
-	else if (!strcmp(argv[1],"-h")) { // affichage aide
-		printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
-	}
-	else if (!strcmp(argv[1],"-e")) { // affichage en-tete  
-		afficheHeader(argv[2]);
-	}
-	else if (!strcmp(argv[1],"-sh")) { // affichage table en-tete section
-		afficheSectionTable(argv[2]);
-	}
-	else if (!strcmp(argv[1],"-s")) { // affichage contenu d'une section
-		if (argc!=4){
-			printf("Usage : \"./edl_fusion -s [nom_fichier] [numero_section]\"\n");
-		}
-		else {
-			affichageSection(argv[2], atoi(argv[3])) ;
-		}
-	}
+	else if (!strcmp(argv[1],"-e")) afficheHeader(argv[2]); // affichage en-tete
+	else if (!strcmp(argv[1],"-sh")) afficheSectionTable(argv[2]); // affichage table en-tete section
+	else if (!strcmp(argv[1],"-s")) affichageSection(argv[2], atoi(argv[3])); // affichage contenu d'une section
 	else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
 
 	return 0;
