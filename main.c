@@ -46,13 +46,13 @@ int main(int argc, char* argv[]) {
 					afficheHeader(header);
 					break;
 				case OPT_S:
-					affichageSection(header,f,atoi(argv[3]));
+					affichageSection(header,f,argv[3],sectionNames);
 					break;
 				case OPT_SH:
 					afficheSectionTable(sectionTable, header, sectionNames);
 					break;
 				case OPT_TS:
-					afficherTableSymbole(header,f);
+					afficherTableSymbole(header,f,sectionTable,sectionNames);
 					break;
 			}
 			fclose(f);

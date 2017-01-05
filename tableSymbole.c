@@ -1,16 +1,17 @@
 #include <elf.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "header.h"
 #include "util.h"
 
 
-void afficherTableSymbole(Elf32_Ehdr* header, FILE* f) {
-	Elf32_Word oct = SHT_NOBITS;
-	Elf32_Off adresse = SHT_NOBITS;
+void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[header->e_shnum], char* sectionNames[header->e_shnum]) {
+	Elf32_Off adresse = SHT_NOBITS, adresseStr = SHT_NOBITS;
 	Elf32_Word taille = SHT_NOBITS;
+	char c; 
 	int nbSection, i, j;
-	long avancement;
+	char nom[10] ;	//nom des variables dans strtab
 
 	Elf32_Word name ;		//st_name
 	Elf32_Addr value ;		//st_value
@@ -21,43 +22,43 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f) {
 
 	nbSection = header->e_shnum;	// Nombre de section du header
 
-	avancement = (header->e_shoff) + 4 ;
-	fseek(f,avancement,SEEK_SET);
-	fread(&oct,4,1,f); 	// sauvegarde de sh_type (2e paquet d'octet = 2 pour sht_symtab)
-	if (header->e_ident[5]==2) {	// traitement du big endian 
-		oct = reverse_4(oct);
+	i=0;
+	while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],".strtab")) != 0)) {
+		i=i+1;
+	}
+	if (i!=header->e_shnum) {		// recupere adresse debut strtab
+		adresseStr = (sectionTable[i]->sh_offset);
+	}
+	if (header->e_ident[5]==2) {	// traitement du big endian
+		adresseStr = reverse_4(adresseStr);
 	}
 
-	i = 0;
-	while (i!=nbSection && oct!=2){
+	i=0;
+	while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],".symtab")) != 0)) {
 		i=i+1;
-		avancement = avancement + 40;
-		fseek(f,avancement,SEEK_SET);
-		fread(&oct,4,1,f); 	// mise a jour de sh_type
-		if (header->e_ident[5]==2) {	// traitement du big endian 
-			oct = reverse_4(oct);
-		}
 	}
+	if (i!=header->e_shnum) {	
+		adresse = (sectionTable[i]->sh_offset); // recupere adresse debut symtab
+		taille = (sectionTable[i]->sh_size);	// recupere taille symtab
+	}
+	if (header->e_ident[5]==2) {	// traitement du big endian
+		taille = reverse_4(taille);
+		adresse = reverse_4(adresse);
+	}
+	taille = taille / 16;
+
+	//printf("%x \n",taille);
+	//printf("%x \n",adresse);
 
 	if (i<=nbSection) {
-		avancement = avancement + 12;
-		fseek(f,avancement,SEEK_SET);	// avance jusqu'a l'adresse
-		fread(&adresse,4,1,f); 			// sauvegarde de l'adresse de symtab
-		fread(&taille,4,1,f);			// sauvegarde de la taille de symtab
-
-		if (header->e_ident[5]==2) {	// traitement du big endian
-			taille = reverse_4(taille);
-			adresse = reverse_4(adresse);
-		}
-
-		taille = taille / 16;
-
 		fseek(f,adresse,SEEK_SET);	// on va au debut de symtab
 		j = 0;
 
-		printf("Name	Value	Size	Type		Vis		Ndx\n");
+		printf("%-16s%-8s%-8s%-16s%-16s%-8s", "Name","Value","Size","Type","Vis","Ndx");
+		printf("\n");
 
 		while(j<taille){
+			fseek(f,adresse+16*j,SEEK_SET);	// on va au debut de symtab
 			fread(&name,4,1,f); 	// mise a jour de name
 			fread(&value,4,1,f); 	// mise a jour de value
 			fread(&size,4,1,f); 	// mise a jour de size
@@ -72,35 +73,47 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f) {
 				shndx = reverse_2(shndx);
 			}
 
+			// --AFFICHAGE--
+
 			// name
-			if(name==0){ printf("	"); }
+			if(name==0){ printf("%-16s",""); }
 			else {
-					printf("%x	", name);
+				fseek(f,adresseStr+name,SEEK_SET);	// avance jusqu'a l'adresse strtab + name 
+				i=0;
+				fread(&c,1,1,f);
+				while(i!=10){
+					nom[i]='\0';
+					i=i+1;
+				}
+				i=0;
+				while(c != 0x00) {
+					nom[i]=c;
+					fread(&c,1,1,f);
+					i=i+1;
+				}
+				printf("%-16s", nom);
 			}
 
-
-			printf("%i	", value);	// value
-			printf("%i	", size);	// size
+			printf("%-8i", value);	// value
+			printf("%-8i", size);	// size
 
 			// type
-			if (info == 0) { printf("NOTYPE"); }
-			else if (info == 1) { printf("OBJECT"); }
-			else if (info == 2) { printf("FUNC"); }
-			else if (info == 3) { printf("SECTION"); }
-			else if (info == 4) { printf("FILE"); }
-			else { printf("PROC"); }
-			printf("		");
+			if (info == 0) { printf("%-16s","NOTYPE"); }
+			else if (info == 1) { printf("%-16s","OBJECT"); }
+			else if (info == 2) { printf("%-16s","FUNC"); }
+			else if (info == 3) { printf("%-16s","SECTION"); }
+			else if (info == 4) { printf("%-16s","FILE"); }
+			else { printf("%-16s","PROC"); }
 
 			// vis
-			printf("DEFAULT		");
+			printf("%-16s","DEFAULT");
 
 			//index
-			if (shndx == 0) { printf("UND"); }
-			else if (shndx == 0xfff1) { printf("ABS"); }
-			else { printf("%x", shndx); }
+			if (shndx == 0) { printf("%-8s","UND"); }
+			else if (shndx == 0xfff1) { printf("%-8s","ABS"); }
+			else { printf("%-8x", shndx); }
 
 			j=j+1;
-
 			printf("\n");
 		}
 	}

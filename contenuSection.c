@@ -7,12 +7,23 @@
 #include "util.h"
 
 
-void affichageSection(Elf32_Ehdr* header, FILE* f, int num) {
+void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char* sectionNames[header->e_shnum]) {
 	long avancement;
 	Elf32_Off adresse = SHT_NOBITS;
 	Elf32_Word taille = SHT_NOBITS;
 
 	int nbSection = header->e_shnum;	// Nombre de section du header
+	int num, i;
+
+	if(nom[0]=='.'){
+		i=0;
+		while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],nom)) != 0)) {
+			i=i+1;
+		}
+			num=i;
+	}else{
+		num=atoi(nom);
+	}
 
 	if (num<nbSection) {
 
@@ -34,8 +45,14 @@ void affichageSection(Elf32_Ehdr* header, FILE* f, int num) {
 
 		fread(&var, 1, taille, f);
 
-		for (int i=0; i < taille; i++) { // affichage
-			printf("%x  ",var[i]);
+		printf("  0x00000000 ");
+
+		for (int i=0; i < taille; i=i+4) { // affichage
+			printf("%02x",var[i]);
+			printf("%02x",var[i+1]);
+			printf("%02x",var[i+2]);
+			printf("%02x ",var[i+3]);
 		}
+		printf("\n");
 	}
 }
