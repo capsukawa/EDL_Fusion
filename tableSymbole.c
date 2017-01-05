@@ -24,12 +24,19 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f) {
 	avancement = (header->e_shoff) + 4 ;
 	fseek(f,avancement,SEEK_SET);
 	fread(&oct,4,1,f); 	// sauvegarde de sh_type (2e paquet d'octet = 2 pour sht_symtab)
+	if (header->e_ident[5]==2) {	// traitement du big endian 
+		oct = reverse_4(oct);
+	}
+
 	i = 0;
 	while (i!=nbSection && oct!=2){
 		i=i+1;
 		avancement = avancement + 40;
 		fseek(f,avancement,SEEK_SET);
 		fread(&oct,4,1,f); 	// mise a jour de sh_type
+		if (header->e_ident[5]==2) {	// traitement du big endian 
+			oct = reverse_4(oct);
+		}
 	}
 
 	if (i<=nbSection) {
@@ -58,11 +65,15 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f) {
 			fread(&other,1,1,f); 	// mise a jour de other
 			fread(&shndx,2,1,f); 	// mise a jour de shndx
 
+			if (header->e_ident[5]==2) {	// traitement du big endian 
+				name = reverse_4(name);
+				value = reverse_4(value);
+				size = reverse_4(size);
+				shndx = reverse_2(shndx);
+			}
+
 			// name
 			if(name==0){ printf("	"); }
-			//else if {
-			//		printf("%x	", name);
-			//}
 			else {
 					printf("%x	", name);
 			}
