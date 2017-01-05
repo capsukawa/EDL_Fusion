@@ -1,6 +1,6 @@
 #ifndef AFFICHEHEADER_H
 #define AFFICHEHEADER_H
 
-void afficheHeader(char* nf);
+void afficheHeader(Elf32_Ehdr* header);
 
 #endif

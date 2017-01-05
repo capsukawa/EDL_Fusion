@@ -3,8 +3,7 @@
 #include <stdlib.h>
 #include "util.h"
 
-void reverseBytesShdr(Elf32_Shdr* section)
-{
+void reverseBytesShdr(Elf32_Shdr* section) {
 	section->sh_name = reverse_4(section->sh_name);
 	section->sh_type = reverse_4(section->sh_type);
 	section->sh_flags = reverse_4(section->sh_flags);
@@ -17,24 +16,12 @@ void reverseBytesShdr(Elf32_Shdr* section)
 	section->sh_entsize = reverse_4(section->sh_entsize);
 }
 
-void readSection(Elf32_Shdr** table, Elf32_Ehdr* header, char* fadr)
-{
-	FILE *f;
-	f = fopen(fadr,"r");
-	if (f==NULL) 
-	{
-		printf("Echec d'ouverture du fichier\n");
-	} 
-	else 
-	{
-		fseek(f, header->e_shoff, SEEK_SET);
-		int i;
-		for(i=0; i< header->e_shnum; i++)
-		{
-			table[i] = malloc(sizeof(Elf32_Shdr));
-			fread(table[i],1,sizeof(Elf32_Shdr),f);
-			if (header->e_ident[5]==2) reverseBytesShdr(table[i]);
-		}
-		fclose(f);
+void readSection(Elf32_Shdr** table, Elf32_Ehdr* header, FILE* f) {
+	fseek(f, header->e_shoff, SEEK_SET);
+	int i;
+	for(i=0; i< header->e_shnum; i++) {
+		table[i] = malloc(sizeof(Elf32_Shdr));
+		fread(table[i],1,sizeof(Elf32_Shdr),f);
+		if (header->e_ident[5]==2) reverseBytesShdr(table[i]);
 	}
 }

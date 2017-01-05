@@ -3,10 +3,7 @@
 #include <stdio.h>
 #include "header.h"
 
-void afficheHeader(char* nf) {
-	Elf32_Ehdr* header;
-	header = initHeader(nf);
-
+void afficheHeader(Elf32_Ehdr* header) {
 	//- Identification -----------------------------------------------------------
 	printf("Identification : ");
 	for (int i=0;i<EI_NIDENT;i++) printf("%x ",header->e_ident[i]);
