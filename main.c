@@ -28,8 +28,10 @@ int main(int argc, char* argv[]) {
 			Elf32_Shdr* sectionTable[header->e_shnum];
 			readSection(sectionTable, header, f);
 
+			// Creation de sectionName
 			char* sectionNames[header->e_shnum];
 			int i;
+			// Remplissage de sectionNames
 			for(i=0; i<header->e_shnum;i++) {
 				sectionNames[i]=malloc(sizeof(char)*20);
 				fseek(f, sectionTable[header->e_shstrndx]->sh_offset + sectionTable[i]->sh_name, SEEK_SET);
@@ -41,6 +43,12 @@ int main(int argc, char* argv[]) {
 					fread(&c,1,1,f);
 				}
 			}
+
+			// Creation de tabNomSym
+			i = rechercheSectionHeader(".symtab",header,sectionNames);
+			int nbNom = (sectionTable[i]->sh_size)/16;
+			char *tabNomSym[nbNom];
+
 			switch(option) {
 				case OPT_E:
 					afficheHeader(header);
@@ -52,7 +60,7 @@ int main(int argc, char* argv[]) {
 					afficheSectionTable(sectionTable, header, sectionNames);
 					break;
 				case OPT_TS:
-					afficherTableSymbole(header,f,sectionTable,sectionNames);
+					afficherTableSymbole(header,f,sectionTable,sectionNames,tabNomSym);
 					break;
 			}
 			fclose(f);

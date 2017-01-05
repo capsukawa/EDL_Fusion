@@ -6,11 +6,25 @@
 #include "util.h"
 
 
-void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[header->e_shnum], char* sectionNames[header->e_shnum]) {
+
+int rechercheSectionHeader(char nom[8],Elf32_Ehdr* header,char* sectionNames[header->e_shnum]) {
+	int i;
+
+	i = 0;
+	while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],nom)) != 0)) {
+		i=i+1;
+	}
+
+	return i;
+}
+
+
+
+void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[header->e_shnum], char* sectionNames[header->e_shnum], char **tabNomSym) {
 	Elf32_Off adresse = SHT_NOBITS, adresseStr = SHT_NOBITS;
 	Elf32_Word taille = SHT_NOBITS;
 	char c; 
-	int nbSection, i, j;
+	int nbSection, i, j, k;
 	char nom[10] ;	//nom des variables dans strtab
 
 	Elf32_Word name ;		//st_name
@@ -22,10 +36,7 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[h
 
 	nbSection = header->e_shnum;	// Nombre de section du header
 
-	i=0;
-	while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],".strtab")) != 0)) {
-		i=i+1;
-	}
+	i = rechercheSectionHeader(".strtab",header,sectionNames);
 	if (i!=header->e_shnum) {		// recupere adresse debut strtab
 		adresseStr = (sectionTable[i]->sh_offset);
 	}
@@ -33,10 +44,7 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[h
 		adresseStr = reverse_4(adresseStr);
 	}
 
-	i=0;
-	while ((i!=header->e_shnum) && ((strcmp(sectionNames[i],".symtab")) != 0)) {
-		i=i+1;
-	}
+	i = rechercheSectionHeader(".symtab",header,sectionNames);
 	if (i!=header->e_shnum) {	
 		adresse = (sectionTable[i]->sh_offset); // recupere adresse debut symtab
 		taille = (sectionTable[i]->sh_size);	// recupere taille symtab
@@ -52,11 +60,11 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[h
 
 	if (i<=nbSection) {
 		fseek(f,adresse,SEEK_SET);	// on va au debut de symtab
-		j = 0;
 
 		printf("%-16s%-8s%-8s%-16s%-16s%-8s", "Name","Value","Size","Type","Vis","Ndx");
 		printf("\n");
 
+		j = 0;
 		while(j<taille){
 			fseek(f,adresse+16*j,SEEK_SET);	// on va au debut de symtab
 			fread(&name,4,1,f); 	// mise a jour de name
@@ -73,10 +81,15 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[h
 				shndx = reverse_2(shndx);
 			}
 
+
 			// --AFFICHAGE--
 
 			// name
-			if(name==0){ printf("%-16s",""); }
+			if (name==0) {
+				printf("%-16s","");
+				tabNomSym[j] = malloc(sizeof(char));
+				tabNomSym[j][0] = '\0';
+			}
 			else {
 				fseek(f,adresseStr+name,SEEK_SET);	// avance jusqu'a l'adresse strtab + name 
 				i=0;
@@ -92,10 +105,19 @@ void afficherTableSymbole(Elf32_Ehdr* header, FILE* f,Elf32_Shdr* sectionTable[h
 					i=i+1;
 				}
 				printf("%-16s", nom);
+				// Remplissage de tabNomSym
+				tabNomSym[j] = malloc(sizeof(char)*i);
+				for (k=0; nom[k]!='\0'; k++) {
+					tabNomSym[j][k] = nom[k];
+				}
+				tabNomSym[j][k] = '\0';
 			}
 
-			printf("%-8i", value);	// value
-			printf("%-8i", size);	// size
+			// value
+			printf("%-8i", value);
+
+			// size
+			printf("%-8i", size);
 
 			// type
 			if (info == 0) { printf("%-16s","NOTYPE"); }
