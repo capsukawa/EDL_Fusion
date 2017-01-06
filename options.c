@@ -10,5 +10,6 @@ int recupererOption(char option[]) {
 	else if (!strcmp(option,"-ts")) return OPT_TS;
 	else if (!strcmp(option,"-tr")) return OPT_TR;
 	else if (!strcmp(option,"-f")) return OPT_F;
+	else if (!strcmp(option,"-r")) return OPT_R;
 	else return NO_OPT;
 }

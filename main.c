@@ -11,6 +11,7 @@
 #include "afficheSectionTable.h"
 #include "tableSymbole.h"
 #include "fusionSection.h"
+#include "relocation.h"
 
 int main(int argc, char* argv[]) {
 	int option = recupererOption(argv[1]);
@@ -44,6 +45,10 @@ int main(int argc, char* argv[]) {
 			Elf32_Sym* symTab[nbSym];
 			
 			readSymTab(header, f, sectionTable, sectionNames, symTab, tabNomSym);
+			
+			int nbRel = getNbRelEntries(sectionTable, header);
+			Elf32_Rel* relTab[nbRel];
+			readRel(sectionTable, header, relTab, f);
 
 			switch(option) {
 				case OPT_E:
@@ -57,6 +62,9 @@ int main(int argc, char* argv[]) {
 					break;
 				case OPT_TS:
 					afficherTableSymbole(symTab,tabNomSym,nbSym);
+					break;
+				case OPT_R:
+					afficheTableRel(relTab, symTab, tabNomSym, sectionNames, nbRel);
 					break;
 				case OPT_F:
 					f2 = fopen(argv[3],"r");

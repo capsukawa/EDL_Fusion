@@ -134,7 +134,7 @@ void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** se
 
 void afficherTableSymbole(Elf32_Sym** symTab, char **tabNomSym, int taille) {
 	
-	printf("%-16s%-8s%-8s%-16s%-16s%-8s", "Name","Value","Size","Type","Vis","Ndx");
+	printf("%-4s%-16s%-8s%-8s%-16s%-16s%-8s","N", "Name","Value","Size","Type","Vis","Ndx");
 	printf("\n");
 
 	int i;
@@ -142,6 +142,9 @@ void afficherTableSymbole(Elf32_Sym** symTab, char **tabNomSym, int taille) {
 	{
 		
 		// --AFFICHAGE--
+
+		// index
+		printf("%-4d", i);
 
 		// name
 		printf("%-16s", tabNomSym[i]);
