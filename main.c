@@ -60,6 +60,7 @@ int main(int argc, char* argv[]) {
 					readSection(sectionTable2, header2, f2);
 					readNames(sectionNames2, header2, f2, sectionTable2);
 					fusionSection(header,header2, f, f2, sectionNames, sectionNames2, sectionTable, sectionTable2);
+					fclose(f2);
 					break;
 			}
 			fclose(f);
