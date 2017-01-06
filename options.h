@@ -7,9 +7,8 @@
 #define OPT_S 	3
 #define OPT_SH 	4
 #define OPT_TS 	5
-#define OPT_TR	6
-#define OPT_F	7
-#define OPT_R	8
+#define OPT_R	6
+#define OPT_F		7
 
 int recupererOption(char option[]);
 
