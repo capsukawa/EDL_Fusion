@@ -19,7 +19,24 @@ void reverseBytesHeader(Elf32_Ehdr* header) {
 	header->e_shstrndx = reverse_2(header->e_shstrndx);
 }
 
+int verifELF(FILE *f) {
+	fseek(f,0,SEEK_SET);
+	char magicTable[4] = {0x7F,0x45,0x4C,0x46};
+	char c;
+	int cmt = 0;
+	int valid = 1;
+
+	fread(&c,1,1,f);
+	while (c!=EOF && cmt<4 && valid) {
+		if (c!=magicTable[cmt]) valid = 0;
+		else cmt++;
+		fread(&c,1,1,f);
+	}
+	return (valid && cmt==4);
+}
+
 Elf32_Ehdr* initHeader(FILE* f) {
+	fseek(f,0,SEEK_SET);
 	Elf32_Ehdr* header;
 	header = malloc(sizeof(Elf32_Ehdr));
 	if (header==NULL) printf("Echec d'allocation mémoire\n");
