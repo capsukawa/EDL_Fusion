@@ -34,22 +34,6 @@ int main(int argc, char* argv[]) {
 			readNames(sectionNames, header, f, sectionTable);
 			int i;
 
-	/*		// Creation de sectionName
-			char* sectionNames[header->e_shnum];
-			int i;
-			// Remplissage de sectionNames
-			for(i=0; i<header->e_shnum;i++) {
-				sectionNames[i]=malloc(sizeof(char)*20);
-				fseek(f, sectionTable[header->e_shstrndx]->sh_offset + sectionTable[i]->sh_name, SEEK_SET);
-				char c; int cmt = 0;
-				fread(&c,1,1,f);
-				while(c != 0x00) {
-					sectionNames[i][cmt] = c;
-					cmt++;
-					fread(&c,1,1,f);
-				}
-			} */
-
 			// Creation de tabNomSym
 			i = rechercheSectionHeader(".symtab",header,sectionNames);
 			int nbNom = (sectionTable[i]->sh_size)/16;
