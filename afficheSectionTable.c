@@ -10,34 +10,34 @@ void afficheType(unsigned int type)
 	char* chaine = "";
 	switch(type)
 	{
-		case 0x00:
+		case SHT_NULL:
 			chaine = "SHT_NULL";
 			break;
-		case 0x01:
+		case SHT_PROGBITS:
 			chaine = "SHT_PROGBITS";
 			break;
-		case 0x02:
+		case SHT_SYMTAB:
 			chaine = "SHT_SYMTAB";
 			break;
-		case 0x03:
+		case SHT_STRTAB:
 			chaine = "SHT_STRTAB";
 			break;
-		case 0x04:
+		case SHT_RELA:
 			chaine = "SHT_RELA";
 			break;
-		case 0x05:
+		case SHT_HASH:
 			chaine = "SHT_HASH";
 			break;
-		case 0x06:
+		case SHT_DYNAMIC:
 			chaine = "SHT_DYNAMIC";
 			break;
-		case 0x07:
+		case SHT_NOTE:
 			chaine = "SHT_NOTE";
 			break;
-		case 0x08:
+		case SHT_NOBITS:
 			chaine = "SHT_NOBITS";
 			break;
-		case 0x09:
+		case SHT_REL:
 			chaine = "SHT_REL";
 			break;
 		default:

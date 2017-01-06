@@ -7,7 +7,7 @@
 #include "util.h"
 
 
-void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char* sectionNames[header->e_shnum]) {
+void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char** sectionNames) {
 	long avancement;
 	Elf32_Off adresse = SHT_NOBITS;
 	Elf32_Word taille = SHT_NOBITS;

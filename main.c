@@ -27,17 +27,23 @@ int main(int argc, char* argv[]) {
 		f = fopen(argv[2],"r");
 		if (f==NULL) printf("Echec d'ouverture du fichier\n");
 		else {
+			//remplissage header
 			header = initHeader(f);
+			
+			//remplissage sectionTable & sectionNames
 			Elf32_Shdr* sectionTable[header->e_shnum];
 			char* sectionNames[header->e_shnum];
 			readSection(sectionTable, header, f);
 			readNames(sectionNames, header, f, sectionTable);
-			int i;
 
-			// Creation de tabNomSym
-			i = rechercheSectionHeader(".symtab",header,sectionNames);
-			int nbNom = (sectionTable[i]->sh_size)/16;
-			char *tabNomSym[nbNom];
+			// remplissage de tabNomSym & symTab
+			int i = rechercheSectionHeader(".symtab",header,sectionNames);
+			int nbSym = (sectionTable[i]->sh_size)/16;
+			
+			char *tabNomSym[nbSym];
+			Elf32_Sym* symTab[nbSym];
+			
+			readSymTab(header, f, sectionTable, sectionNames, symTab, tabNomSym);
 
 			switch(option) {
 				case OPT_E:
@@ -50,7 +56,7 @@ int main(int argc, char* argv[]) {
 					afficheSectionTable(sectionTable, header, sectionNames);
 					break;
 				case OPT_TS:
-					afficherTableSymbole(header,f,sectionTable,sectionNames,tabNomSym);
+					afficherTableSymbole(symTab,tabNomSym,nbSym);
 					break;
 				case OPT_F:
 					f2 = fopen(argv[3],"r");
