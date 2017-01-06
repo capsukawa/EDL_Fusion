@@ -8,7 +8,7 @@ void readNames(char** table, Elf32_Ehdr* header, FILE* f, Elf32_Shdr** sectionTa
 	int i;
 		// Remplissage de sectionNames
 		for(i=0; i<header->e_shnum;i++) {
-			table[i]=malloc(sizeof(char)*20);
+			table[i]=malloc(sizeof(char)*20); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			fseek(f, sectionTable[header->e_shstrndx]->sh_offset + sectionTable[i]->sh_name, SEEK_SET);
 			char c; int cmt = 0;
 			fread(&c,1,1,f);

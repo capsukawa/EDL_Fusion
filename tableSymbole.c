@@ -7,7 +7,7 @@
 
 void afficheTypeSymbole(unsigned char type) {
 	char* chaine = "";
-	switch(type) 
+	switch(type)
 	{
 		case STT_NOTYPE:
 			chaine="NOTYPE";
@@ -44,7 +44,7 @@ int rechercheSectionHeader(char nom[8],Elf32_Ehdr* header,char* sectionNames[hea
 	return i;
 }
 
-void reverseBytesSymbole(Elf32_Sym* symbole) 
+void reverseBytesSymbole(Elf32_Sym* symbole)
 {
 	symbole->st_name = reverse_4(symbole->st_name);
 	symbole->st_value = reverse_4(symbole->st_value);
@@ -52,13 +52,13 @@ void reverseBytesSymbole(Elf32_Sym* symbole)
 	symbole->st_shndx = reverse_2(symbole->st_shndx);
 }
 
-void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** sectionNames, Elf32_Sym** symTab, char **tabNomSym) 
+void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** sectionNames, Elf32_Sym** symTab, char **tabNomSym)
 {
 	Elf32_Off adresse = SHT_NOBITS, adresseStr = SHT_NOBITS;
 	Elf32_Word taille = SHT_NOBITS;
-	char c; 
+	char c;
 	int nbSection, i, j, k;
-	char nom[10] ;	//nom des variables dans strtab
+	char nom[100] ;	//nom des variables dans strtab //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	nbSection = header->e_shnum;	// Nombre de section du header
 
@@ -71,7 +71,7 @@ void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** se
 	}
 
 	i = rechercheSectionHeader(".symtab",header,sectionNames);
-	if (i!=header->e_shnum) {	
+	if (i!=header->e_shnum) {
 		adresse = (sectionTable[i]->sh_offset); // recupere adresse debut symtab
 		taille = (sectionTable[i]->sh_size);	// recupere taille symtab
 	}
@@ -93,18 +93,18 @@ void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** se
 			symTab[j]=malloc(tailleSym);
 			fseek(f,adresse+tailleSym*j,SEEK_SET);	// on va au debut de symtab
 			fread(symTab[j],1,tailleSym,f); 	// mise a jour de symbole
-			
-			if (header->e_ident[5]==2) {	// traitement du big endian 
+
+			if (header->e_ident[5]==2) {	// traitement du big endian
 				reverseBytesSymbole(symTab[j]);
 			}
-			
+
 			// name
 			if (symTab[j]->st_name==0) {
 				tabNomSym[j] = malloc(sizeof(char));
 				tabNomSym[j][0] = '\0';
 			}
 			else {
-				fseek(f,adresseStr+symTab[j]->st_name,SEEK_SET);	// avance jusqu'a l'adresse strtab + name 
+				fseek(f,adresseStr+symTab[j]->st_name,SEEK_SET);	// avance jusqu'a l'adresse strtab + name
 				i=0;
 				fread(&c,1,1,f);
 				while(i!=10){
@@ -133,14 +133,14 @@ void readSymTab(Elf32_Ehdr* header, FILE* f,Elf32_Shdr** sectionTable, char** se
 
 
 void afficherTableSymbole(Elf32_Sym** symTab, char **tabNomSym, int taille) {
-	
+
 	printf("%-4s%-16s%-8s%-8s%-16s%-16s%-8s","N", "Name","Value","Size","Type","Vis","Ndx");
 	printf("\n");
 
 	int i;
 	for(i=0; i<taille; i++)
 	{
-		
+
 		// --AFFICHAGE--
 
 		// index
@@ -148,7 +148,7 @@ void afficherTableSymbole(Elf32_Sym** symTab, char **tabNomSym, int taille) {
 
 		// name
 		printf("%-16s", tabNomSym[i]);
-		
+
 		// value
 		printf("%-8i", symTab[i]->st_value);
 
