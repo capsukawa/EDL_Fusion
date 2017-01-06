@@ -29,11 +29,8 @@ int main(int argc, char* argv[]) {
 			FILE *f2;
 			f = fopen(argv[2],"r");
 			if (f==NULL) printf("Echec d'ouverture du fichier\n");
+			else if (!verifELF(f)) printf("Le fichier donné en paramètre n'est pas un fichier ELF.\n");
 			else {
-				//verification que le fichier est un fichier ELF
-				int verifOK = verifELF(f);
-				if (!verif) break;
-
 				//remplissage header
 				header = initHeader(f);
 
@@ -87,7 +84,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
-		if (!verif) printf("Le fichier en paramètre n'est pas un fichier au format ELF\n");
 	}
 	return 0;
 }
