@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "util.h"
+#include "elfStruct.h"
 
 void reverseBytesHeader(Elf32_Ehdr* header) {
 	header->e_type = reverse_2(header->e_type);
@@ -35,14 +36,12 @@ int verifELF(FILE *f) {
 	return (valid && cmt==4);
 }
 
-Elf32_Ehdr* initHeader(FILE* f) {
+void initHeader(ElfFileStruct* elf,FILE* f) {
 	fseek(f,0,SEEK_SET);
-	Elf32_Ehdr* header;
-	header = malloc(sizeof(Elf32_Ehdr));
-	if (header==NULL) printf("Echec d'allocation mémoire\n");
+	elf->header = malloc(sizeof(Elf32_Ehdr));
+	if (elf->header==NULL) printf("Echec d'allocation mémoire\n");
 	else {
-		fread(header,1,sizeof(Elf32_Ehdr),f);
-		if (header->e_ident[5]==2) reverseBytesHeader(header);
+		fread(elf->header,1,sizeof(Elf32_Ehdr),f);
+		if (elf->header->e_ident[5]==2) reverseBytesHeader(elf->header);
 	}
-	return header;
 }

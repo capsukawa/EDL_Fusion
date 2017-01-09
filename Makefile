@@ -1,11 +1,10 @@
 CC=gcc
 FLAGS=-Wall -Werror
 
-edl_fusion: main.o afficheHeader.o header.o contenuSection.o afficheSectionTable.o sectionTable.o tableSymbole.o options.o sectionNames.o fusionSection.o relocation.o
+edl_fusion: main.o affichage.o header.o sections.o symbols.o relocation.o elfStruct.o options.o
 	$(CC) -o $@ $^
 
 %.o: %.c %.h header.h
 	$(CC) $(FLAGS) -c $<
 
-main.o: sectionTable.h afficheSectionTable.h sectionTable.h tableSymbole.h relocation.h
-afficheSectionTable.o: sectionTable.h
+main.o: affichage.o

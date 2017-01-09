@@ -1,8 +1,10 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#include "elfStruct.h"
+
 void reverseBytesHeader(Elf32_Ehdr* header);
 int verifELF(FILE *f);
-Elf32_Ehdr* initHeader(FILE* f);
+void initHeader(ElfFileStruct* elf,FILE* f);
 
 #endif
