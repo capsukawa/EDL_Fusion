@@ -7,11 +7,12 @@
 #include "util.h"
 
 
-void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char** sectionNames) {
-	long avancement;
-	Elf32_Off adresse = SHT_NOBITS;
-	Elf32_Word taille = SHT_NOBITS;
 
+Elf32_Word recupererTailleSection(Elf32_Ehdr* header, FILE* f, char *nom, char** sectionNames) {
+	Elf32_Word taille = SHT_NOBITS;
+	Elf32_Off adresse = SHT_NOBITS;
+
+	long avancement;
 	int nbSection = header->e_shnum;	// Nombre de section du header
 	int num, i;
 
@@ -39,20 +40,49 @@ void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char** sectionName
 			adresse = reverse_4(adresse);
 		}
 
-		unsigned char var[taille];
-
 		fseek(f,adresse,SEEK_SET);	// On va au debut du contenu de la section
+	}
 
-		fread(&var, 1, taille, f);
+	return taille;
+}
 
-		printf("  0x00000000 ");
 
-		for (int i=0; i < taille; i=i+4) { // affichage
-			printf("%02x",var[i]);
+
+void affichageSection(Elf32_Ehdr* header, FILE* f, char *nom, char** sectionNames) {
+	Elf32_Word taille = SHT_NOBITS;
+
+	taille = recupererTailleSection(header, f, nom, sectionNames);
+
+	unsigned char var[taille];
+
+	fread(&var, 1, taille, f);
+
+	printf("  0x00000000 ");
+
+	for (int i=0; i < taille; i=i+4) { // affichage
+		printf("%02x",var[i]);
+		if (i+1 < taille) {
 			printf("%02x",var[i+1]);
+		}
+		if (i+2 < taille) {
 			printf("%02x",var[i+2]);
+		}
+		if (i+3 < taille) {
 			printf("%02x ",var[i+3]);
 		}
-		printf("\n");
 	}
+	printf("\n");
+}
+
+
+unsigned char *recupererVarSection(Elf32_Word taille, FILE* f) {
+
+	Elf32_Word taille = SHT_NOBITS;
+
+	taille = recupererTailleSection(header, f, nom, sectionNames);
+
+	unsigned char var[taille];
+
+	fread(&var, 1, taille, f);
+	return var;
 }
