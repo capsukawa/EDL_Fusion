@@ -40,11 +40,21 @@ void initSectionHeader(ElfFileStruct* elf, FILE* f) {
 void initSectionNames(ElfFileStruct* elf, FILE* f) {
 	fseek(f, elf->header->e_shoff, SEEK_SET);
 	int i;
+	char c;
+	int cmt = 0;
+	int curPlace;
 	// Remplissage de sectionNames
 	for (i=0; i<elf->header->e_shnum;i++) {
-		elf->sections[i]->name = malloc(sizeof(char)*20); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		fseek(f, elf->sections[elf->header->e_shstrndx]->header->sh_offset + elf->sections[i]->header->sh_name, SEEK_SET);
-		char c; int cmt = 0;
+		curPlace = elf->sections[elf->header->e_shstrndx]->header->sh_offset + elf->sections[i]->header->sh_name;
+		fseek(f, curPlace, SEEK_SET);
+		fread(&c,1,1,f);
+		while(c != 0x00) {
+			cmt++;
+			fread(&c,1,1,f);
+		}
+		elf->sections[i]->name = malloc(sizeof(char)*cmt);
+		cmt = 0;
+		fseek(f, curPlace, SEEK_SET);
 		fread(&c,1,1,f);
 		while(c != 0x00) {
 			elf->sections[i]->name[cmt] = c;
