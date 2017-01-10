@@ -57,9 +57,11 @@ int main(int argc, char* argv[]) {
 						f2 = fopen(optarg,"r");
 						elf2 = malloc(sizeof(ElfFileStruct));
 						if (elf2==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
+						elff = malloc(sizeof(ElfFileStruct));
+						if (elff==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 						remplirStruct(f2,elf2);
 
-						//fusionSection(f,f2,elf1,elf2);
+						fusionSectionHeader(elf1,elf2,elff);
 						fusionSymbole(elf1,elf2,elff);
 
 						fclose(f2);
