@@ -196,15 +196,17 @@ void afficheSectionHeaderTable(ElfFileStruct* elf) {
 }
 
 void afficheSectionContent(ElfFileStruct* elf,int numSection) {
-	printf("  0x00000000 ");
-	int taille = elf->sections[numSection]->header->sh_size;
-	for (int i=0; i < taille; i=i+4) { // affichage
-		printf("%02x",elf->sections[numSection]->content[i]);
-		if (i+1 < taille) printf("%02x",elf->sections[numSection]->content[i+1]);
-		if (i+2 < taille)	printf("%02x",elf->sections[numSection]->content[i+2]);
-		if (i+3 < taille) printf("%02x ",elf->sections[numSection]->content[i+3]);
-	}
-	printf("\n");
+	if (numSection<elf->header->e_shnum) { // Pour si on demande une section qui n'existe pas..
+		printf("  0x00000000 ");
+		int taille = elf->sections[numSection]->header->sh_size;
+		for (int i=0; i < taille; i=i+4) { // affichage
+			printf("%02x",elf->sections[numSection]->content[i]);
+			if (i+1 < taille) printf("%02x",elf->sections[numSection]->content[i+1]);
+			if (i+2 < taille)	printf("%02x",elf->sections[numSection]->content[i+2]);
+			if (i+3 < taille) printf("%02x ",elf->sections[numSection]->content[i+3]);
+		}
+		printf("\n");
+	} else printf("La section %d n'existe pas; La dernière est la section %d\n",numSection,elf->header->e_shnum-1);
 }
 
 void afficheTypeSymbole(unsigned char type) {
