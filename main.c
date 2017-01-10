@@ -11,6 +11,7 @@
 #include "symbols.h"
 #include "relocation.h"
 #include "affichage.h"
+#include "fusionSymbole.h"
 
 int main(int argc, char* argv[]) {
 	if (argc<=1) afficheAide();
@@ -57,6 +58,7 @@ int main(int argc, char* argv[]) {
 						remplirStruct(f2,elf2);
 
 						//fusionSection(f,f2,elf1,elf2);
+						fusionSymbole(elf1,elf2,elff);
 
 						fclose(f2);
 						freeELF(elf2);
