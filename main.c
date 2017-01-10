@@ -60,6 +60,7 @@ int main(int argc, char* argv[]) {
 				}
 				fclose(f);
 			}
+			freeELF(elf1);
 		}
 		else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
 	}
