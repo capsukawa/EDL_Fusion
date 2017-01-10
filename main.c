@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 						afficheHeader(elf1);
 						break;
 					case OPT_S:
-						afficheSectionContent(elf1,atoi(argv[3]));
+						afficheSectionContent(elf1,argv[3]);
 						break;
 					case OPT_SH:
 						afficheSectionHeaderTable(elf1);

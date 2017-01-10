@@ -15,7 +15,7 @@ void afficheSectionHeaderTable(ElfFileStruct* elf);
 /*
 Affiche en hexadécimal le contenu de la section d’index donné en paramètre.
 */
-void afficheSectionContent(ElfFileStruct* elf,int numSection);
+void afficheSectionContent(ElfFileStruct* elf,char* idSection);
 
 /*
 Affiche la table des symboles

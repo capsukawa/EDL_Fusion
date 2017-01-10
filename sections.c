@@ -17,13 +17,18 @@ void reverseBytesShdr(Elf32_Shdr* section) {
 	section->sh_entsize = reverse_4(section->sh_entsize);
 }
 
+//retourne l'indice de l'entete de section correspondant au name, -1 sinon
 int findSectionHeader(char* name, ElfFileStruct* elf) {
 	int i;
 	i = 0;
 	while ((i!=elf->header->e_shnum) && ((strcmp(elf->sections[i]->name,name)) != 0)) {
 		i=i+1;
 	}
-	return i;
+	if(i!=elf->header->e_shnum) {
+		return i;
+	} else {
+		return -1;
+	}
 }
 
 void initSectionHeader(ElfFileStruct* elf, FILE* f) {
