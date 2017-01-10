@@ -271,15 +271,39 @@ void afficheTypeSymbole(unsigned char type) {
 			chaine = "FILE";
 			break;
 		default:
-			printf("%-16x", type);
+			printf("%-12x", type);
 	}
-	if (strcmp(chaine,"")) printf("%-16s", chaine);
+	if (strcmp(chaine,"")) printf("%-12s", chaine);
+}
+
+void afficheLienSymbole(unsigned char info) {
+	char* chaine = "";
+	switch(ELF32_ST_BIND(info)) {
+		case STB_LOCAL:
+			chaine="LOCAL";
+			break;
+		case STB_GLOBAL:
+			chaine = "GLOBAL";
+			break;
+		case STB_WEAK:
+			chaine = "WEAK";
+			break;
+		case STB_LOPROC:
+			chaine = "LOPROC";
+			break;
+		case STB_HIPROC:
+			chaine = "HIPROC";
+			break;
+		default:
+			printf("%-6x ", ELF32_ST_BIND(info));
+	}
+	if (strcmp(chaine,"")) printf("%-6s ", chaine);
 }
 
 void afficheSymbolTable(ElfFileStruct* elf) {
 	printf("\n-- Table des symboles --\n");
 	
-	printf("%4s%-8s %-5s %-16s %-16s %-8s %-20s","Num:"," Value"," Size"," Type","Vis","Ndx", "Name");
+	printf("%4s%-8s %-5s %-12s %-6s %-7s %-8s %-20s","Num:"," Value"," Size"," Type","Lien","Vis","Ndx", "Name");
 	printf("\n");
 
 	int i;
@@ -290,7 +314,8 @@ void afficheSymbolTable(ElfFileStruct* elf) {
 		printf("%08x ", elf->symbols[i]->sym->st_value); // value
 		printf("%5i ", elf->symbols[i]->sym->st_size); // size
 		afficheTypeSymbole(elf->symbols[i]->sym->st_info); // type
-		printf("%-16s ","DEFAULT");	// vis
+		afficheLienSymbole(elf->symbols[i]->sym->st_info); // lien
+		printf("%-7s ","DEFAULT");	// vis
 
 		//index
 		if (elf->symbols[i]->sym->st_shndx == 0) { printf("%-8s ","UND"); }
