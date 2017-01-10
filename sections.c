@@ -24,7 +24,7 @@ int findSectionHeader(char* name, ElfFileStruct* elf) {
 	while ((i!=elf->header->e_shnum) && ((strcmp(elf->sections[i]->name,name)) != 0)) {
 		i=i+1;
 	}
-	if(i!=elf->header->e_shnum) {
+	if((i!=elf->header->e_shnum)&&(strcmp(elf->sections[i]->name,name) == 0)) {
 		return i;
 	} else {
 		return -1;

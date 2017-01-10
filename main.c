@@ -11,6 +11,8 @@
 #include "symbols.h"
 #include "relocation.h"
 #include "affichage.h"
+#include "fusionSection.h"
+#include "fusionSectionHeader.h"
 #include "fusionSymbole.h"
 
 int main(int argc, char* argv[]) {
