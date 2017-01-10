@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 		FILE *ff;
 
 		f = fopen(argv[argc-1],"r");
-		else if (!verifELF(f)) printf("Le fichier donné en paramètre n'est pas un fichier ELF.\n");
+		if (!verifELF(f)) printf("Le fichier donné en paramètre n'est pas un fichier ELF.\n");
 		else {
 			remplirStruct(f, elf1);
 			while ((c = getopt (argc, argv, "heStrf:s:")) != -1) {
