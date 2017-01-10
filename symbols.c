@@ -22,11 +22,6 @@ void initSymbols(ElfFileStruct* elf, FILE* f) {
 	adresseSym = elf->sections[i]->header->sh_offset; 	// recupere adresse debut symtab
 	sizeOfSymTab = elf->sections[i]->header->sh_size;	// recupere taille symtab
 
-	if (elf->header->e_ident[5]==2) {	// traitement du big endian
-		adresseStr = reverse_4(adresseStr);
-		sizeOfSymTab = reverse_4(sizeOfSymTab);
-		adresseSym = reverse_4(adresseSym);
-	}
 	elf->nbSym = sizeOfSymTab / 16;
 
 	int sizeOfSym = sizeof(Elf32_Sym);
