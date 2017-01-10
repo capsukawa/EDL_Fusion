@@ -182,12 +182,12 @@ void afficheFanions(unsigned int flag) {
 void afficheSectionHeaderTable(ElfFileStruct* elf) {
 	printf("\n-- Table des en-tetes de section --\n");
 	
-	printf("%-4s%-20s%-20s%-10s%-8s %-8s %-8s %-8s %-8s %-8s %-8s\n",
-			"Num", "Name", "Type", "Flags", "Adr", "Offset", "Size", "Link", "Info", "Adalign", "Entsize");
+	printf("%-4s %-20s%-20s%-10s%-8s %-8s %-8s %-8s %-8s %-8s %-8s\n",
+			"[Nr]", "Name", "Type", "Flags", "Adr", "Offset", "Size", "Link", "Info", "Adalign", "Entsize");
 
 	int i;
 	for(i=0; i<elf->header->e_shnum; i++) {
-		printf("%-4d",i);
+		printf("[%2d] ",i);
 		printf("%-20s", elf->sections[i]->name);
 		afficheType(elf->sections[i]->header->sh_type);
 		afficheFanions(elf->sections[i]->header->sh_flags);
@@ -216,22 +216,20 @@ int isNumber(char* input) {
 }
 
 void printSection(Elf_Section* section) {
-	printf("\n-- Contenu de la section --\n");
+	printf("\n-- Contenu de la section %s--\n",section->name);
 	int taille = section->header->sh_size;
 	
-	//~ int i=0;
-	//~ while(i<taille-1) {
-		//~ printf("%02x ",section->content[i]);
-		//~ if(i%8==0) printf(" ");
-		//~ if (i%16==0) printf("\n");
-		//~ i++;
-	//~ }
-
-	for (int i=0; i < taille; i=i+4) { // affichage
-		printf("%02x",section->content[i]);
-		if (i+1 < taille) printf("%02x",section->content[i+1]);
-		if (i+2 < taille)	printf("%02x",section->content[i+2]);
-		if (i+3 < taille) printf("%02x ",section->content[i+3]);
+	int i=0;
+	while(i<taille) {
+		if(i%16==0) {
+			printf("\n");
+			printf("0x%08x ",i);
+		}
+		if(i%8==0) {
+			printf(" ");
+		}
+		printf("%02x ",section->content[i]);
+		i++;
 	}
 	printf("\n");
 }
@@ -248,7 +246,6 @@ void afficheSectionContent(ElfFileStruct* elf,char* idSection) {
 	else {
 		index = findSectionHeader(idSection,elf);
 		if(index>=0) {
-			printf("Section d'indice %d\n",index);
 			printSection(elf->sections[index]);
 		}
 		else { printf("La section de nom %s n'existe pas\n",idSection); }
@@ -282,24 +279,25 @@ void afficheTypeSymbole(unsigned char type) {
 void afficheSymbolTable(ElfFileStruct* elf) {
 	printf("\n-- Table des symboles --\n");
 	
-	printf("%-4s%-16s%-8s%-8s%-16s%-16s%-8s","N", "Name","Value","Size","Type","Vis","Ndx");
+	printf("%4s%-8s %-5s %-16s %-16s %-8s %-20s","Num:"," Value"," Size"," Type","Vis","Ndx", "Name");
 	printf("\n");
 
 	int i;
 	for(i=0; i<elf->nbSym; i++) {
 		// --AFFICHAGE--
 
-		printf("%-4d", i); // index
-		printf("%-16s", elf->symbols[i]->name); // name
-		printf("%-8i", elf->symbols[i]->sym->st_value); // value
-		printf("%-8i", elf->symbols[i]->sym->st_size); // size
+		printf("%3d: ", i); // index
+		printf("%08x ", elf->symbols[i]->sym->st_value); // value
+		printf("%5i ", elf->symbols[i]->sym->st_size); // size
 		afficheTypeSymbole(elf->symbols[i]->sym->st_info); // type
-		printf("%-16s","DEFAULT");	// vis
+		printf("%-16s ","DEFAULT");	// vis
 
 		//index
-		if (elf->symbols[i]->sym->st_shndx == 0) { printf("%-8s","UND"); }
-		else if (elf->symbols[i]->sym->st_shndx == 0xfff1) { printf("%-8s","ABS"); }
-		else { printf("%-8x", elf->symbols[i]->sym->st_shndx); }
+		if (elf->symbols[i]->sym->st_shndx == 0) { printf("%-8s ","UND"); }
+		else if (elf->symbols[i]->sym->st_shndx == 0xfff1) { printf("%-8s ","ABS"); }
+		else { printf("%-8x ", elf->symbols[i]->sym->st_shndx); }
+		
+		printf("%-20s", elf->symbols[i]->name); // name
 		printf("\n");
 	}
 }
@@ -314,7 +312,7 @@ void afficheTypeRel(Elf32_Rel* rel) {
 			chaine = "R_ARM_CALL";
 			break;
 		default:
-			printf("%-16x ", ELF32_R_TYPE(rel->r_info));
+			printf("%08x         ", ELF32_R_TYPE(rel->r_info));
 	}
 	if (strcmp(chaine,"")) printf("%-16s ", chaine);
 }
@@ -327,7 +325,7 @@ void afficheRelTable(ElfFileStruct* elf) {
 	
 	printf("\n-- Table de reloc --\n");
 
-	printf("%-8s %-8s %-16s %-20s\n", "Offset","Info","Type","Sym");
+	printf("%-8s %-8s %-16s %-20s\n", "Offset"," Info"," Type"," Sym");
 	for(i=0;i<elf->nbRel;i++) {
 		printf(" %08x %08x ", elf->relTab[i]->r_offset, elf->relTab[i]->r_info);
 		afficheTypeRel(elf->relTab[i]);
@@ -339,4 +337,13 @@ void afficheRelTable(ElfFileStruct* elf) {
 		} else printf("%-20s", elf->symbols[infoSymRel]->name);
 		printf("\n");
 	}
+}
+
+void afficheAide() {
+	printf("-e [nom_du_fichier] : affiche l'en-tete du fichier\n");
+	printf("-s [id_de_section] [nom_du_fichier] : affiche le contenu de la section\n");
+	printf("-S [nom_du_fichier] : affiche la table des sections\n");
+	printf("-t [nom_du_fichier] : affiche la table des symboles\n");
+	printf("-r [nom_du_fichier] : affiche la table de réimplantation\n");
+	printf("-f [nom_du_fichier_2] [nom_du_fichier] : fusionne deux fichiers ELF\n");
 }

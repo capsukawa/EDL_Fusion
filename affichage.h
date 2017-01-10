@@ -27,5 +27,9 @@ Affiche la table de ré implémentation
 */
 void afficheRelTable(ElfFileStruct* elf);
 
+/*
+Affiche l'aide
+*/
+void afficheAide();
 
 #endif
