@@ -31,13 +31,16 @@ void initSymbols(ElfFileStruct* elf, FILE* f) {
 
 	int sizeOfSym = sizeof(Elf32_Sym);
 	elf->symbols = malloc(sizeof(Elf_Symbol)*elf->nbSym);
+	if (elf->symbols==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 
 	fseek(f,adresseSym,SEEK_SET);
 
 	for(int j = 0; j < elf->nbSym; j++) {
 		//sym of Elf_Symbol struct
 		elf->symbols[j] = malloc(sizeof(Elf_Symbol));
+		if (elf->symbols[j]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		elf->symbols[j]->sym = malloc(sizeOfSym);
+		if (elf->symbols[j]->sym==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		fseek(f,adresseSym+(sizeOfSym*j),SEEK_SET);	// on va au debut de symtab + symbole passé
 		fread(elf->symbols[j]->sym,1,sizeOfSym,f); 	// mise a jour de symbole
 
@@ -63,7 +66,8 @@ void initSymbols(ElfFileStruct* elf, FILE* f) {
 			}
 
 			elf->symbols[j]->name = malloc(sizeof(char)*i);
-			fseek(f,-i-1,SEEK_CUR); //TODO attention au '-i'
+			if (elf->symbols[j]->name==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
+			fseek(f,-i-1,SEEK_CUR);
 			fread(elf->symbols[j]->name, 1, i, f);
 		//~ }
 	}

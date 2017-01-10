@@ -31,7 +31,9 @@ void initSectionHeader(ElfFileStruct* elf, FILE* f) {
 	int i;
 	for(i=0; i< elf->header->e_shnum; i++) {
 		elf->sections[i] = malloc(sizeof(Elf_Section));
+		if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
+		if (elf->sections[i]->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		fread(elf->sections[i]->header,1,sizeof(Elf32_Shdr),f);
 		if (elf->header->e_ident[5]==2) reverseBytesShdr(elf->sections[i]->header);
 	}
@@ -53,6 +55,7 @@ void initSectionNames(ElfFileStruct* elf, FILE* f) {
 			fread(&c,1,1,f);
 		}
 		elf->sections[i]->name = malloc(sizeof(char)*cmt);
+		if (elf->sections[i]->name==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		cmt = 0;
 		fseek(f, curPlace, SEEK_SET);
 		fread(&c,1,1,f);
@@ -69,6 +72,7 @@ void initSectionContent(ElfFileStruct* elf, FILE* f) {
 	for (int i=0; i<elf->header->e_shnum;i++) {
 		size = elf->sections[i]->header->sh_size;
 		elf->sections[i]->content = malloc(sizeof(unsigned char)*size);
+		if (elf->sections[i]->content==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		fseek(f,elf->sections[i]->header->sh_offset,SEEK_SET);
 		fread(elf->sections[i]->content,1,size,f);
 	}
@@ -76,6 +80,7 @@ void initSectionContent(ElfFileStruct* elf, FILE* f) {
 
 void initSections(ElfFileStruct* elf, FILE* f) {
 	elf->sections = malloc(sizeof(Elf_Section)*elf->header->e_shnum);
+	if (elf->sections==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	if (elf->sections != NULL) {
 		initSectionHeader(elf,f);
 		initSectionNames(elf,f);

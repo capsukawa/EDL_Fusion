@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
 		else if (option!=NO_OPT){
 			ElfFileStruct* elf1;
 			elf1 = malloc(sizeof(ElfFileStruct));
+			if (elf1==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			FILE *f;
 			FILE *f2;
 			f = fopen(argv[2],"r");
@@ -59,8 +60,8 @@ int main(int argc, char* argv[]) {
 						break;
 				}
 				fclose(f);
+				freeELF(elf1);
 			}
-			freeELF(elf1);
 		}
 		else printf("Usage : \"./edl_fusion [-option] [nom_fichier]\"\n");
 	}

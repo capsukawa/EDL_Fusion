@@ -20,6 +20,7 @@ void initRel(ElfFileStruct* elf, FILE* f) {
 	int nbEntries; int tailleEntry;
 
 	elf->relTab = malloc(sizeof(Elf32_Rel)*elf->nbRel);
+	if (elf->relTab==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	for (i=0;i<elf->header->e_shnum;i++) { //pour chaque section
 		//REL
 		if(elf->sections[i]->header->sh_type == SHT_REL) {
@@ -28,6 +29,7 @@ void initRel(ElfFileStruct* elf, FILE* f) {
 			for (j=0;j<nbEntries;j++) { //pour chaque entrée dans la table de relocation
 				fseek(f,elf->sections[i]->header->sh_offset+j*tailleEntry,SEEK_SET); //seek au bon endroit
 				elf->relTab[j]=malloc(sizeof(Elf32_Rel)); //allocation memoire
+				if (elf->relTab[j]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 				fread(elf->relTab[j], 1, tailleEntry, f); //lecture dans le fichier et affectation dans la structure
 
 				//endianess

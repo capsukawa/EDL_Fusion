@@ -39,7 +39,7 @@ int verifELF(FILE *f) {
 void initHeader(ElfFileStruct* elf,FILE* f) {
 	fseek(f,0,SEEK_SET);
 	elf->header = malloc(sizeof(Elf32_Ehdr));
-	if (elf->header==NULL) printf("Echec d'allocation mémoire\n");
+	if (elf->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	else {
 		fread(elf->header,1,sizeof(Elf32_Ehdr),f);
 		if (elf->header->e_ident[5]==2) reverseBytesHeader(elf->header);
