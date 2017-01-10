@@ -27,9 +27,13 @@ int main(int argc, char* argv[]) {
 			if (elf1==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			FILE *f;
 
-			// Utilisé uniquement pour la fusion
+			// Deuxième fichier pour la fusion
 			ElfFileStruct* elf2;
 			FILE *f2;
+
+			// Fichier final fusionné
+			ElfFileStruct* elff;
+			FILE *ff;
 
 			f = fopen(argv[2],"r");
 			if (f==NULL) printf("Echec d'ouverture du fichier\n");
