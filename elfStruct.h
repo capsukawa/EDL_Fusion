@@ -34,5 +34,6 @@ typedef struct {
 Initialise la structure pour le fichier elf donné en paramètre
 */
 void remplirStruct(FILE* f, ElfFileStruct* elf);
+void freeELF(ElfFileStruct* elf);
 
 #endif
