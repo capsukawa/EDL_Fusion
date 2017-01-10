@@ -26,7 +26,11 @@ int main(int argc, char* argv[]) {
 			elf1 = malloc(sizeof(ElfFileStruct));
 			if (elf1==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			FILE *f;
+
+			// Utilisé uniquement pour la fusion
+			ElfFileStruct* elf2;
 			FILE *f2;
+
 			f = fopen(argv[2],"r");
 			if (f==NULL) printf("Echec d'ouverture du fichier\n");
 			else if (!verifELF(f)) printf("Le fichier donné en paramètre n'est pas un fichier ELF.\n");
@@ -49,14 +53,15 @@ int main(int argc, char* argv[]) {
 						afficheRelTable(elf1);
 						break;
 					case OPT_F:
-						/*f2 = fopen(argv[3],"r");
-						Elf32_Ehdr* header2 = initHeader(f2);
-						Elf32_Shdr* sectionTable2[elf1.header->e_shnum];
-						char* sectionNames2[elf1.header->e_shnum];
-						readSection(sectionTable2, header2, f2);
-						readNames(sectionNames2, header2, f2, sectionTable2);
-						fusionSection(elf1.header,header2, f, f2, elf1.sectionNames, sectionNames2, elf1.sectionTable, sectionTable2);
-						fclose(f2);*/
+						f2 = fopen(argv[3],"r");
+						elf2 = malloc(sizeof(ElfFileStruct));
+						if (elf2==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
+						remplirStruct(f2,elf2);
+
+						//fusionSection(f,f2,elf1,elf2);
+
+						fclose(f2);
+						freeELF(elf2);
 						break;
 				}
 				fclose(f);
