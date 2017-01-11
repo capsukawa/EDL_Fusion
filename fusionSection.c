@@ -18,7 +18,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	int sectionEnPlus;
 	int sectionsPrecedentes = 0;
 	int *decalageSection = malloc(sizeof(int));
-	int *indice = malloc(sizeof(int));	// tableau indices section f2 pas ds f1 pr les rajouter
+	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
 	char* nom;
 
 	calculShOff(elf1, elf2, &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
@@ -87,12 +87,12 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf){
 	int i, j, ind;
 	int addTailleSection, decalageTotal, sectionEnPlus;
-	int *indice = malloc(sizeof(int));
+	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
 	char *nom;
 
 	fusionSectionHeader(elf1, elf2, elf);
 
-	calculShOff(elf1, elf2 , &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
+	calculShOff(elf1, elf2 , &addTailleSection, &decalageTotal, &sectionEnPlus, indice);	
 
 	i = 0;
 	while (i < elf1->header->e_shnum) {	//recopie et eventuel changement des sections header de f1
@@ -116,7 +116,7 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 	j=0;
 	while ( (i < elf2->header->e_shnum)&&(j!=sectionEnPlus) ) {	//recopie et eventuel changement des sections header de f1
 		elf->sections[i]->name = malloc(sizeof(elf2->sections[indice[j]]->name));
-		elf->sections[i]->name = elf2->sections[indice[j]]->name;
+		strcpy(elf->sections[i]->name,elf2->sections[indice[j]]->name);
 		elf->sections[i]->content = malloc(sizeof(elf2->sections[indice[j]]->content));
 		elf->sections[i]->content = elf2->sections[indice[j]]->content;
 		j = j+1;

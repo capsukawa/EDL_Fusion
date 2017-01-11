@@ -70,16 +70,18 @@ void calculShOff(ElfFileStruct* elf1,ElfFileStruct* elf2 , int* addTailleSection
 
 
 void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) {
-	
+
+	if (elf1->header->e_shentsize != elf2->header->e_shentsize) {
+		abort();
+	}
+
 	// Modification du header 
-	//int nbSection1 = elf1->header->e_shnum;	// Nombre de section de f1
 	int i;
 	int addTailleSection;
 	int decalageTotal; // taille des sections de f2 rajoutee avant les sections header  
 	int sectionEnPlus;
 	int *decalageSection = malloc(sizeof(int));
-	int *indice = malloc(sizeof(int));	// tableau indices section f2 pas ds f1 pr les rajouter
-
+	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
 
 	calculShOff(elf1, elf2, &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
 
