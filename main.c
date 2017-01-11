@@ -12,7 +12,7 @@
 #include "relocation.h"
 #include "affichage.h"
 #include "fusionSection.h"
-#include "fusionSectionHeader.h"
+#include "fusionHeader.h"
 #include "fusionSymbole.h"
 
 int main(int argc, char* argv[]) {
@@ -61,9 +61,10 @@ int main(int argc, char* argv[]) {
 						if (elff==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 						remplirStruct(f2,elf2);
 
-						fusionSectionHeader(elf1,elf2,elff);
-						fusionSymbole(elf1,elf2,elff);
-
+						fusionHeader(elf2,elf1,elff);
+						fusionSection(elf2,elf1,elff);
+						//fusionSymbole(elf1,elf2,elff);
+						
 						fclose(f2);
 						freeELF(elf2);
 						break;
