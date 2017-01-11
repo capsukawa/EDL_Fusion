@@ -99,9 +99,9 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 		nom = elf1->sections[i]->name;
 		ind = findSectionHeader(nom,elf2);
 		if(ind!=-1) {	// on change le contenu des section si section ds f2
-			elf->sections[i]->content = malloc(sizeof(elf1->sections[i]->content)+sizeof(elf2->sections[i]->content));
+			elf->sections[i]->content = malloc((sizeof(char)*elf1->sections[i]->header->sh_size)+(sizeof(char)*elf2->sections[ind]->header->sh_size));
 			strcpy((char *)elf->sections[i]->content,(char *)elf1->sections[i]->content);
-			strcat((char *)elf->sections[i]->content,(char *)elf2->sections[i]->content);
+			strcat((char *)elf->sections[i]->content,(char *)elf2->sections[ind]->content);
 		}
 		else {	// recopie du contenu de f1 si rien a concatener
 			elf->sections[i]->content = malloc(sizeof(elf1->sections[i]->content));
