@@ -28,8 +28,11 @@ void freeELF(ElfFileStruct* elf) {
 		free(elf->symbols[i]);
 	}
 	free(elf->symbols);
-	for (i=0;i<elf->nbRel;i++) free(elf->relTab[i]);
-	free(elf->relTab);
+	
+	//TODO
+	//~ for (i=0;i<elf->nbRel;i++) free(elf->relTab[i]);
+	//~ free(elf->relTab);
+	
 	free(elf->header);
 	free(elf);
 }

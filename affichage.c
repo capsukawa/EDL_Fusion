@@ -343,24 +343,28 @@ void afficheTypeRel(Elf32_Rel* rel) {
 }
 
 void afficheRelTable(ElfFileStruct* elf) {
-	int i;
+	int i,j;
 	unsigned char infoSymRel;
 	unsigned char typeSymRel;
 	Elf32_Half indexSectionSymRel;
 	
 	printf("\n-- Table de reloc --\n");
-
-	printf("%-8s %-8s %-16s %-20s\n", "Offset"," Info"," Type"," Sym");
-	for(i=0;i<elf->nbRel;i++) {
-		printf(" %08x %08x ", elf->relTab[i]->r_offset, elf->relTab[i]->r_info);
-		afficheTypeRel(elf->relTab[i]);
-		infoSymRel = ELF32_R_SYM(elf->relTab[i]->r_info);
-		typeSymRel = ELF32_ST_TYPE(elf->symbols[infoSymRel]->sym->st_info);
-		if(typeSymRel == STT_SECTION) {
-			indexSectionSymRel = elf->symbols[infoSymRel]->sym->st_shndx;
-			printf("%-20s", elf->sections[indexSectionSymRel]->name);
-		} else printf("%-20s", elf->symbols[infoSymRel]->name);
-		printf("\n");
+	for(i=0;i<elf->header->e_shnum;i++) {
+		if(elf->sections[i]->header->sh_type == SHT_REL) {
+			printf("\nSection de relocalisation \'%s\', offset 0x%04x avec %d entrées:\n", elf->sections[i]->name, elf->sections[i]->header->sh_offset, elf->sections[i]->nbRel);
+			printf("%-8s %-8s %-16s %-20s\n", "Offset"," Info"," Type"," Sym");
+			for(j=0;j<elf->sections[i]->nbRel;j++) {
+				printf(" %08x %08x ", elf->sections[i]->relTab[j]->r_offset, elf->sections[i]->relTab[j]->r_info);
+				afficheTypeRel(elf->sections[i]->relTab[j]);
+				infoSymRel = ELF32_R_SYM(elf->sections[i]->relTab[j]->r_info);
+				typeSymRel = ELF32_ST_TYPE(elf->symbols[infoSymRel]->sym->st_info);
+				if(typeSymRel == STT_SECTION) {
+					indexSectionSymRel = elf->symbols[infoSymRel]->sym->st_shndx;
+					printf("%-20s", elf->sections[indexSectionSymRel]->name);
+				} else printf("%-20s", elf->symbols[infoSymRel]->name);
+				printf("\n");
+			}
+		}
 	}
 }
 

@@ -10,6 +10,8 @@ typedef struct {
     char* name;
     Elf32_Shdr* header;
     unsigned char* content;
+    Elf32_Rel** relTab;
+    int nbRel;
 } Elf_Section;
 
 /*
@@ -19,6 +21,7 @@ typedef struct {
     char* name;
     Elf32_Sym* sym;
 } Elf_Symbol;
+
 /*
 Structure pour le fichier elf
 */
@@ -26,8 +29,7 @@ typedef struct {
     Elf32_Ehdr* header;
     Elf_Section** sections;
     Elf_Symbol** symbols;
-    Elf32_Rel** relTab;
-    int nbSym, nbRel;
+    int nbSym;
 } ElfFileStruct;
 
 /*
