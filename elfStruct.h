@@ -4,13 +4,21 @@
 #include <stdio.h>
 
 /*
+Structure pour les rel
+*/
+typedef struct {
+    char* name;
+    Elf32_Rel* rel;
+} Elf_Rel;
+
+/*
 Structure pour les sections
 */
 typedef struct {
     char* name;
     Elf32_Shdr* header;
     unsigned char* content;
-    Elf32_Rel** relTab;
+    Elf_Rel** relTab;
     int nbRel;
 } Elf_Section;
 
