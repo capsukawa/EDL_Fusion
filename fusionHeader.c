@@ -90,8 +90,6 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 		elf->header->e_ident[i] = elf1->header->e_ident[i];
 	}
 
-
-
 	elf->header->e_type = elf1->header->e_type;
 	elf->header->e_machine = elf1->header->e_machine;
 	elf->header->e_version = elf1->header->e_version;
@@ -105,8 +103,5 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 	elf->header->e_shentsize = elf1->header->e_shentsize;
 	elf->header->e_shnum = sectionEnPlus + elf1->header->e_shnum;
 	elf->header->e_shstrndx = elf1->header->e_shstrndx;
-
-
-
 
 }
