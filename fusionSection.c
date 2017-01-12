@@ -18,7 +18,9 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	int sectionEnPlus;
 	int sectionsPrecedentes = 0;
 	int *decalageSection = malloc(sizeof(int)*elf1->header->e_shnum+1);
+	if (decalageSection==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
+	if (indice==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	char* nom;
 
 	calculShOff(elf1, elf2, &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
@@ -26,6 +28,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	preTraitementF1(elf1, elf2, decalageSection);
 
 	elf->sections = malloc(sizeof(Elf_Section)*elf->header->e_shnum);
+	if (elf->sections==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	while (i < elf1->header->e_shnum) {	//recopie et eventuel changement des sections header de f1
 		nom = elf1->sections[i]->name ;
 
@@ -35,7 +38,9 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 		ind = findSectionHeader(nom,elf2);
 		if(ind!=-1) {	// on change le section header si section ds f2
 			elf->sections[i] = malloc(sizeof(Elf_Section));
+			if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
+			if (elf->sections[i]->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header->sh_name = elf1->sections[i]->header->sh_name;
 			elf->sections[i]->header->sh_type = elf1->sections[i]->header->sh_type;
 			elf->sections[i]->header->sh_flags = elf1->sections[i]->header->sh_flags;
@@ -54,7 +59,9 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 		}
 		else {	//recopie section header f1 si section pas dans f2
 			elf->sections[i] = malloc(sizeof(Elf_Section));
+			if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
+			if (elf->sections[i]->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header->sh_name = elf1->sections[i]->header->sh_name;
 			elf->sections[i]->header->sh_type = elf1->sections[i]->header->sh_type;
 			elf->sections[i]->header->sh_flags = elf1->sections[i]->header->sh_flags;
@@ -78,7 +85,9 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	k=0;	// sections header des sections ds f2 absentes de f1
 	while ( (i < elf->header->e_shnum)&&(k!=sectionEnPlus) ) {	// parcours du tableau des indices : sections de f2 pas dans f1
 			elf->sections[i] = malloc(sizeof(Elf_Section));
+			if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
+			if (elf->sections[i]->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 // Mauvais name !!!! simple concat des shstrtab ! 
 			elf->sections[i]->header->sh_name = elf2->sections[indice[k]]->header->sh_name;
 			elf->sections[i]->header->sh_type = elf2->sections[indice[k]]->header->sh_type;
@@ -104,6 +113,7 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 	int i, j, ind;
 	int addTailleSection, decalageTotal, sectionEnPlus;
 	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
+	if (indice==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	char *nom;
 	int d, sizeName;
 	int e,g;
@@ -124,6 +134,7 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 
 		if(ind!=-1) {	// on change le contenu des section si section ds f2
 			elf->sections[i]->content = malloc(sizeof(char)*elf->sections[i]->header->sh_size);
+			if (elf->sections[i]->content==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			d=0;
 			e=0;	
 			g=0;
@@ -141,6 +152,7 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 		}
 		else {	// recopie du contenu de f1 si rien a concatener
 			elf->sections[i]->content = malloc(sizeof(char)*elf->sections[i]->header->sh_size);
+			if (elf->sections[i]->content==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			d=0;
 			while(d< elf->sections[i]->header->sh_size){	// concat
 				elf->sections[i]->content[d] = elf1->sections[i]->content[d];
@@ -154,6 +166,7 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 			c = elf1->sections[i]->name[sizeName];
 		}
 		elf->sections[i]->name = malloc(sizeName);
+		if (elf->sections[i]->name==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		elf->sections[i]->name= elf1->sections[i]->name; //recopie du nom des sections de f1
 
 		i = i+1;
@@ -163,8 +176,10 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 	j=0;
 	while ( (i < elf->header->e_shnum)&&(j!=sectionEnPlus) ) {	//recopie et eventuel changement des sections header de f1
 		elf->sections[i]->name = malloc(sizeof(elf2->sections[indice[j]]->name));
+		if (elf->sections[i]->name==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		elf->sections[i]->name = elf2->sections[indice[j]]->name;
 		elf->sections[i]->content = malloc(sizeof(elf2->sections[indice[j]]->content));
+		if (elf->sections[i]->content==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 		elf->sections[i]->content = elf2->sections[indice[j]]->content;
 		j = j+1;
 		i = i+1;

@@ -81,13 +81,16 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 	int decalageTotal; // taille des sections de f2 rajoutee avant les sections header  
 	int sectionEnPlus;
 	int *decalageSection = malloc(sizeof(int)*elf1->header->e_shnum+1);
+	if (decalageSection==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
+	if (indice==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 
 	calculShOff(elf1, elf2, &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
 
 	preTraitementF1(elf1, elf2, decalageSection);
 
 	elf->header = malloc(sizeof(Elf32_Ehdr));
+	if (elf->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	for(i=0; i<EI_NIDENT; i++){
 		elf->header->e_ident[i] = elf1->header->e_ident[i];
 	}
