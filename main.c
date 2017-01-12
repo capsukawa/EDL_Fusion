@@ -33,7 +33,8 @@ int main(int argc, char* argv[]) {
 		FILE *ff;
 
 		f = fopen(argv[argc-1],"r");
-		if (!verifELF(f)) printf("Le fichier donné en paramètre n'est pas un fichier ELF.\n");
+		if(!f) printf("Fichier %s introuvable\n./edl_fusion pour afficher l'aide\n",argv[argc-1]);
+		else if (!verifELF(f)) printf("Le fichier %s n'est pas un fichier ELF.\n",argv[argc-1]);
 		else {
 			remplirStruct(f, elf1);
 			while ((c = getopt (argc, argv, "heStrf:s:")) != -1) {
@@ -55,19 +56,23 @@ int main(int argc, char* argv[]) {
 						break;
 					case 'f':
 						f2 = fopen(optarg,"r");
-						elf2 = malloc(sizeof(ElfFileStruct));
-						if (elf2==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
-						elff = malloc(sizeof(ElfFileStruct));
-						if (elff==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
-						remplirStruct(f2,elf2);
+						if(!f2) printf("Fichier %s pour la fusion introuvable\n",optarg);
+						else if (!verifELF(f2)) printf("Le fichier %s n'est pas un fichier ELF.\n",optarg);
+						else {
+							elf2 = malloc(sizeof(ElfFileStruct));
+							if (elf2==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
+							elff = malloc(sizeof(ElfFileStruct));
+							if (elff==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
+							remplirStruct(f2,elf2);
 
-						fusionHeader(elf2,elf1,elff);
+							fusionHeader(elf2,elf1,elff);
 
-						fusionSection(elf2,elf1,elff);
-						//fusionSymbole(elf1,elf2,elff);
-						
-						fclose(f2);
-						//freeELF(elf2);
+							fusionSection(elf2,elf1,elff);
+							//fusionSymbole(elf1,elf2,elff);
+							
+							fclose(f2);
+							//freeELF(elf2);
+						}
 						break;
 					default:
 						break;
