@@ -14,6 +14,7 @@
 #include "fusionSection.h"
 #include "fusionHeader.h"
 #include "fusionSymbole.h"
+#include "fusionCreationFichier.h"
 
 int main(int argc, char* argv[]) {
 	if (argc<=1) afficheAide();
@@ -62,9 +63,9 @@ int main(int argc, char* argv[]) {
 						remplirStruct(f2,elf2);
 
 						fusionHeader(elf2,elf1,elff);
-
 						fusionSection(elf2,elf1,elff);
 						//fusionSymbole(elf1,elf2,elff);
+						creationFichierFusion(elff);
 						
 						fclose(f2);
 						//freeELF(elf2);

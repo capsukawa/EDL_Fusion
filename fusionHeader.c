@@ -22,12 +22,12 @@ void preTraitementF1(ElfFileStruct* elf1,ElfFileStruct* elf2, int *decalageSecti
 		if(elf1->sections[i]->header->sh_offset < elf1->header->e_shoff){
 			nombre = nombre+1;
 		}
-		nomSection1 = elf1->sections[i]->name; // On recupere le nom de la section	
+		nomSection1 = elf1->sections[i]->name; // On recupere le nom de la section
+		j=0;
 		while(j!=nbSection2){
 			nomSection2 = elf2->sections[j]->name; // On recupere le nom de la section	
 			if(strcmp(nomSection1,nomSection2)==0){
-				decalageSection = realloc(decalageSection,sizeof(int)*(i+1));
-				decalageSection[i+1] = decalageSection[i] + elf2->sections[j]->header->sh_size; 
+				decalageSection[i+1] = decalageSection[i] + elf2->sections[j]->header->sh_size;
 			}
 			j=j+1;
 		}
@@ -80,7 +80,7 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 	int addTailleSection;
 	int decalageTotal; // taille des sections de f2 rajoutee avant les sections header  
 	int sectionEnPlus;
-	int *decalageSection = malloc(sizeof(int));
+	int *decalageSection = malloc(sizeof(int)*elf1->header->e_shnum+1);
 	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
 
 	calculShOff(elf1, elf2, &addTailleSection, &decalageTotal, &sectionEnPlus, indice);
@@ -91,7 +91,6 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 	for(i=0; i<EI_NIDENT; i++){
 		elf->header->e_ident[i] = elf1->header->e_ident[i];
 	}
-
 	elf->header->e_type = elf1->header->e_type;
 	elf->header->e_machine = elf1->header->e_machine;
 	elf->header->e_version = elf1->header->e_version;
