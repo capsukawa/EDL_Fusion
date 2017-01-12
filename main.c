@@ -62,11 +62,15 @@ int main(int argc, char* argv[]) {
 						remplirStruct(f2,elf2);
 
 						fusionHeader(elf2,elf1,elff);
+
 						fusionSection(elf2,elf1,elff);
 						//fusionSymbole(elf1,elf2,elff);
+						afficheHeader(elff);
+						afficheSectionHeaderTable(elff);
+						afficheSectionContent(elff,"1");
 						
 						fclose(f2);
-						freeELF(elf2);
+						//freeELF(elf2);
 						break;
 					default:
 						break;

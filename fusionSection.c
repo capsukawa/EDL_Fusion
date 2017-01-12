@@ -61,7 +61,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	}
 
 	k=0;	// sections header des sections ds f2 absentes de f1
-	while ( (i < elf2->header->e_shnum)&&(k!=sectionEnPlus) ) {	// parcours du tableau des indices : sections de f2 pas dans f1
+	while ( (i < elf->header->e_shnum)&&(k!=sectionEnPlus) ) {	// parcours du tableau des indices : sections de f2 pas dans f1
 			elf->sections[i] = malloc(sizeof(Elf_Section));
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
 			elf->sections[i]->header->sh_name = elf2->sections[indice[k]]->header->sh_name;
@@ -89,7 +89,9 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 	int addTailleSection, decalageTotal, sectionEnPlus;
 	int *indice = malloc(sizeof(int)*elf2->header->e_shoff);	// tableau indices section f2 pas ds f1 pr les rajouter
 	char *nom;
-
+	int d;
+	int e;
+	
 	fusionSectionHeader(elf1, elf2, elf);
 
 	calculShOff(elf1, elf2 , &addTailleSection, &decalageTotal, &sectionEnPlus, indice);	
@@ -99,9 +101,15 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 		nom = elf1->sections[i]->name;
 		ind = findSectionHeader(nom,elf2);
 		if(ind!=-1) {	// on change le contenu des section si section ds f2
-			elf->sections[i]->content = malloc((sizeof(char)*elf1->sections[i]->header->sh_size)+(sizeof(char)*elf2->sections[ind]->header->sh_size));
-			strcpy((char *)elf->sections[i]->content,(char *)elf1->sections[i]->content);
-			strcat((char *)elf->sections[i]->content,(char *)elf2->sections[ind]->content);
+			elf->sections[i]->content = malloc(sizeof(char)*elf->sections[i]->header->sh_size);
+			elf->sections[i]->content = elf1->sections[i]->content;
+			d=elf1->sections[i]->header->sh_size;
+			e=0;		
+			while(d< elf->sections[i]->header->sh_size){
+				elf->sections[i]->content[d] = elf2->sections[ind]->content[e];
+				d=d+1;
+				e=e+1;
+			}
 		}
 		else {	// recopie du contenu de f1 si rien a concatener
 			elf->sections[i]->content = malloc(sizeof(elf1->sections[i]->content));
@@ -114,9 +122,9 @@ void fusionSection(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf)
 
 	// cas des sections de f2 absentes de f1	
 	j=0;
-	while ( (i < elf2->header->e_shnum)&&(j!=sectionEnPlus) ) {	//recopie et eventuel changement des sections header de f1
+	while ( (i < elf->header->e_shnum)&&(j!=sectionEnPlus) ) {	//recopie et eventuel changement des sections header de f1
 		elf->sections[i]->name = malloc(sizeof(elf2->sections[indice[j]]->name));
-		strcpy(elf->sections[i]->name,elf2->sections[indice[j]]->name);
+		elf->sections[i]->name = elf2->sections[indice[j]]->name;
 		elf->sections[i]->content = malloc(sizeof(elf2->sections[indice[j]]->content));
 		elf->sections[i]->content = elf2->sections[indice[j]]->content;
 		j = j+1;
