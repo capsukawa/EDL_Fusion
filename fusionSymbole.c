@@ -77,15 +77,39 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 	//compelete strtab
 	j = findSectionHeader(".strtab", elff);
 	i = 1;
-	elff->sections[j]->content = realloc(elff->sections[j]->content,1);
+	int iName;
+	int size = 1;
+	elff->sections[j]->content = realloc(elff->sections[j]->content,size);
 	elff->sections[j]->content = 0x00;
+	elff->sections[j]->header->sh_size = size;
+
+	char c;
 	for(k=0; k<elff->nbSym; k++) {
 		if(strcmp(elff->symbols[k]->name,"")) {
-			 elff->sections[j]->content = realloc(elff->sections[j]->content, sizeof(elff->sections[j]->content)+sizeof(elff->symbols[k]->name)+1);
-			 elff->sections[j]->content = (unsigned char*)strcat((char*)elff->sections[j]->content, elff->symbols[k]->name);
-			 elff->sections[j]->content[sizeof(elff->sections[j]->content)] = 0x00;
-			 elff->symbols[k]->sym->st_name = i;
-			 i = i + sizeof(elff->symbols[k]->name)+1;
+			iName = 0;
+			c = elff->symbols[k]->name[iName];
+			while(c != 0x00) {
+				iName ++;
+				c = elff->symbols[k]->name[iName];
+			}
+			iName++; // pour l'ajout de 0x00
+			elff->sections[j]->content = realloc(elff->sections[j]->content, (size + iName + 1));
+			for(w=0; w<iName; w++) {
+				elff->sections[j]->content[size] = elff->symbols[k]->name[w];
+				size++;
+			}
+			elff->sections[j]->content[size] = 0x00;
+			size++;
+
+			elff->symbols[k]->sym->st_name = i;
+			i = i + iName;
+
+
+			//elff->sections[j]->content = realloc(elff->sections[j]->content, sizeof(elff->sections[j]->content)+sizeof(elff->symbols[k]->name)+1);
+			//elff->sections[j]->content = (unsigned char*)strcat((char*)elff->sections[j]->content, elff->symbols[k]->name);
+			//elff->sections[j]->content[sizeof(elff->sections[j]->content)] = 0x00;
+			//elff->symbols[k]->sym->st_name = i;
+			//i = i + sizeof(elff->symbols[k]->name)+1;
 		}
 	}
 }
