@@ -44,10 +44,8 @@ void initRel(ElfFileStruct* elf, FILE* f) {
 				typeSymRel = ELF32_ST_TYPE(elf->symbols[infoSymRel]->sym->st_info);
 				if(typeSymRel == STT_SECTION) {
 					Elf32_Half indexSectionSymRel = elf->symbols[infoSymRel]->sym->st_shndx;
-					elf->sections[i]->relTab[j]->name = malloc(sizeof(elf->sections[indexSectionSymRel]->name)); //size alloc
 					elf->sections[i]->relTab[j]->name = elf->sections[indexSectionSymRel]->name;
 				} else {
-					elf->sections[i]->relTab[j]->name = malloc(sizeof(elf->symbols[infoSymRel]->name)); //size alloc
 					elf->sections[i]->relTab[j]->name = elf->symbols[infoSymRel]->name;
 				}
 			}

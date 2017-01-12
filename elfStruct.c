@@ -14,11 +14,16 @@ void remplirStruct(FILE* f, ElfFileStruct* elf) {
 }
 
 void freeELF(ElfFileStruct* elf) {
-	int i;
+	int i,j;
 	for (i=0;i<elf->header->e_shnum;i++) {
 		free(elf->sections[i]->name);
 		free(elf->sections[i]->content);
 		free(elf->sections[i]->header);
+		for(j=0;j<elf->sections[i]->nbRel;j++) {
+			free(elf->sections[i]->relTab[j]->rel);
+			free(elf->sections[i]->relTab[j]);
+		}
+		free(elf->sections[i]->relTab);
 		free(elf->sections[i]);
 	}
 	free(elf->sections);
@@ -28,11 +33,6 @@ void freeELF(ElfFileStruct* elf) {
 		free(elf->symbols[i]);
 	}
 	free(elf->symbols);
-	
-	//TODO
-	//~ for (i=0;i<elf->nbRel;i++) free(elf->relTab[i]);
-	//~ free(elf->relTab);
-	
 	free(elf->header);
 	free(elf);
 }
