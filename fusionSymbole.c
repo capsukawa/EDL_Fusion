@@ -16,6 +16,7 @@ void addSymbol(ElfFileStruct* elf, Elf_Symbol* sym) {
 		if (elf->symbols[elf->nbSym]->name==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 	elf->symbols[elf->nbSym]->name = sym->name;
 	memcpy(elf->symbols[elf->nbSym]->sym,sym->sym,sizeof(Elf32_Sym));
+	elf->nbSym++;
 }
 
 void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff) {
@@ -24,27 +25,24 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 	int indiceTraite[elf2->nbSym];
 	elff->symbols = malloc(sizeof(Elf_Symbol)*elff->nbSym+1);
 	if (elff->symbols==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
-
 	// Symboles locaux
 	for (i=0;i<elf1->nbSym;i++) {
 		if (ELF32_ST_BIND(elf1->symbols[i]->sym->st_info) == STB_LOCAL) {
 			addSymbol(elff,elf1->symbols[i]);
-			elff->nbSym++;
 		}
 	}
 	for (j=0;j<elf2->nbSym;j++) {
 		if (ELF32_ST_BIND(elf2->symbols[j]->sym->st_info) == STB_LOCAL) {
 			addSymbol(elff,elf2->symbols[j]);
-			elff->nbSym++;
 		}
 	}
-
 	// Symboles globaux
 	for (i=0;i<elf1->nbSym;i++) {
 		symTrouve = 0;
 		if (ELF32_ST_BIND(elf1->symbols[i]->sym->st_info) == STB_GLOBAL) {
 			for(j=0;j<elf2->nbSym;j++) {
-				if(elf1->symbols[i]->name == elf2->symbols[j]->name && !symTrouve){
+				if(!symTrouve && strcmp(elf1->symbols[i]->name, elf2->symbols[j]->name) == 0) {
+					//elf1->symbols[i]->name == elf2->symbols[j]->name && !symTrouve){
 					symTrouve = 1;
 					indiceTraite[k]=j;
 					k++;
@@ -53,8 +51,9 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 						abort();
 					} else if (elf1->symbols[i]->sym->st_shndx != SHN_UNDEF && elf2->symbols[j]->sym->st_shndx == SHN_UNDEF)
 						addSymbol(elff,elf1->symbols[i]);
-					else if (elf1->symbols[i]->sym->st_shndx == SHN_UNDEF && elf2->symbols[j]->sym->st_shndx != SHN_UNDEF)
-						addSymbol(elff,elf2->symbols[j]);
+					else if (elf1->symbols[i]->sym->st_shndx == SHN_UNDEF && elf2->symbols[j]->sym->st_shndx != SHN_UNDEF) {
+							addSymbol(elff,elf2->symbols[j]);
+					}
 					else addSymbol(elff,elf1->symbols[i]);
 				} else if (symTrouve) break;
 			}
@@ -80,7 +79,6 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 	i = 1;
 	elff->sections[j]->content = realloc(elff->sections[j]->content,1);
 	elff->sections[j]->content = 0x00;
-
 	for(k=0; k<elff->nbSym; k++) {
 		if(strcmp(elff->symbols[k]->name,"")) {
 			 elff->sections[j]->content = realloc(elff->sections[j]->content, sizeof(elff->sections[j]->content)+sizeof(elff->symbols[k]->name)+1);
@@ -90,6 +88,4 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 			 i = i + sizeof(elff->symbols[k]->name)+1;
 		}
 	}
-
-
 }

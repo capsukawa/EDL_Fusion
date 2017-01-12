@@ -68,9 +68,10 @@ int main(int argc, char* argv[]) {
 
 							fusionHeader(elf2,elf1,elff);
 							fusionSection(elf2,elf1,elff);
-							//fusionSymbole(elf1,elf2,elff);
+							fusionSymbole(elf1,elf2,elff);
+							afficheSymbolTable(elff);
 							creationFichierFusion(elff);
-						
+
 							fclose(f2);
 							//freeELF(elf2);
 						}
