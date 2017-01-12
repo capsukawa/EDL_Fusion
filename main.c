@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "elfStruct.h"
-#include "options.h"
 #include "header.h"
 #include "sections.h"
 #include "symbols.h"
@@ -68,7 +67,7 @@ int main(int argc, char* argv[]) {
 
 							fusionHeader(elf2,elf1,elff);
 							fusionSection(elf2,elf1,elff);
-							//~ fusionSymbole(elf1,elf2,elff);
+							fusionSymbole(elf1,elf2,elff);
 							//~ afficheSymbolTable(elff);
 							creationFichierFusion(elff);
 
