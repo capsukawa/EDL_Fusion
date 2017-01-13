@@ -99,7 +99,7 @@ void fusionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elf) 
 	elf->header->e_version = elf1->header->e_version;
 	elf->header->e_entry = elf1->header->e_entry;
 	elf->header->e_phoff = 0;
-	elf->header->e_shoff = decalageTotal + elf1->header->e_shoff;
+	elf->header->e_shoff = decalageSection[elf1->header->e_shnum] + elf1->header->e_shoff;
 	elf->header->e_flags = elf1->header->e_flags;
 	elf->header->e_ehsize = elf1->header->e_ehsize;
 	elf->header->e_phentsize = 0;

@@ -42,7 +42,6 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 		if (ELF32_ST_BIND(elf1->symbols[i]->sym->st_info) == STB_GLOBAL) {
 			for(j=0;j<elf2->nbSym;j++) {
 				if(!symTrouve && strcmp(elf1->symbols[i]->name, elf2->symbols[j]->name) == 0) {
-					//elf1->symbols[i]->name == elf2->symbols[j]->name && !symTrouve){
 					symTrouve = 1;
 					indiceTraite[k]=j;
 					k++;
@@ -103,13 +102,6 @@ void fusionSymbole(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct* elff
 
 			elff->symbols[k]->sym->st_name = i;
 			i = i + iName;
-
-
-			//elff->sections[j]->content = realloc(elff->sections[j]->content, sizeof(elff->sections[j]->content)+sizeof(elff->symbols[k]->name)+1);
-			//elff->sections[j]->content = (unsigned char*)strcat((char*)elff->sections[j]->content, elff->symbols[k]->name);
-			//elff->sections[j]->content[sizeof(elff->sections[j]->content)] = 0x00;
-			//elff->symbols[k]->sym->st_name = i;
-			//i = i + sizeof(elff->symbols[k]->name)+1;
 		}
 	}
 }

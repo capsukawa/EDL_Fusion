@@ -13,6 +13,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 
 	// Modification des headers de sections
 	int ind = 0, i = 0, k = 0;
+	int indShstrtab;
 	int addTailleSection;
 	int decalageTotal; 
 	int sectionEnPlus;
@@ -32,11 +33,13 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 	while (i < elf1->header->e_shnum) {	//recopie et eventuel changement des sections header de f1
 		nom = elf1->sections[i]->name ;
 
-// pas concat de shstrtab ..
-
+		if(strcmp(nom,".shstrtab")==0){
+			indShstrtab = i;
+		}
 
 		ind = findSectionHeader(nom,elf2);
 		if(ind!=-1) {	// on change le section header si section ds f2
+
 			elf->sections[i] = malloc(sizeof(Elf_Section));
 			if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
@@ -45,7 +48,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 			elf->sections[i]->header->sh_type = elf1->sections[i]->header->sh_type;
 			elf->sections[i]->header->sh_flags = elf1->sections[i]->header->sh_flags;
 			elf->sections[i]->header->sh_addr = elf1->sections[i]->header->sh_addr;
-			if(i>elf->header->e_shoff){
+			if(elf1->sections[i]->header->sh_offset > elf->header->e_shoff){
 				elf->sections[i]->header->sh_offset = decalageSection[i] + elf1->sections[i]->header->sh_offset + sectionEnPlus*elf->header->e_shentsize;	
 			}else {
 				elf->sections[i]->header->sh_offset = decalageSection[i] + elf1->sections[i]->header->sh_offset;
@@ -67,7 +70,7 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 			elf->sections[i]->header->sh_flags = elf1->sections[i]->header->sh_flags;
 			elf->sections[i]->header->sh_addr = elf1->sections[i]->header->sh_addr;
 
-			if(i>elf->header->e_shoff){
+			if(elf1->sections[i]->header->sh_offset > elf->header->e_shoff){
 				elf->sections[i]->header->sh_offset = decalageSection[i] + elf1->sections[i]->header->sh_offset + sectionEnPlus*elf->header->e_shentsize;	
 			}
 			else {
@@ -88,8 +91,8 @@ void fusionSectionHeader(ElfFileStruct* elf1, ElfFileStruct* elf2, ElfFileStruct
 			if (elf->sections[i]==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
 			elf->sections[i]->header = malloc(sizeof(Elf32_Shdr));
 			if (elf->sections[i]->header==NULL) {printf("Echec d'allocation mémoire.\n"); abort();}
-// Mauvais name !!!! simple concat des shstrtab ! 
-			elf->sections[i]->header->sh_name = elf2->sections[indice[k]]->header->sh_name;
+			//name = name de f2 + taille de shstrtab de f1 
+			elf->sections[i]->header->sh_name = elf2->sections[indice[k]]->header->sh_name + elf1->sections[indShstrtab]->header->sh_size;
 			elf->sections[i]->header->sh_type = elf2->sections[indice[k]]->header->sh_type;
 			elf->sections[i]->header->sh_flags = elf2->sections[indice[k]]->header->sh_flags;
 			elf->sections[i]->header->sh_addr = elf2->sections[indice[k]]->header->sh_addr; 
